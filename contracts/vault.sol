@@ -34,7 +34,8 @@ contract Vault {
     function updateSafe()    external {}
     function closeSafe()     external {}
     function contribute()    external {}
-    function 
+    function getContributors() external view returns(address) {}
+    
 
 
 }
