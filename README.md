@@ -4,8 +4,10 @@
 - vault contracts in progeess; 
 
 
-// testing  Authentification in progress : 
+// testing  Authentification in progress : (verified)
+
     - register function passed 
     - getUser function passed
     - updateUserDetails function passed
     - deletedUser function passed
+    - changeRoles function passed

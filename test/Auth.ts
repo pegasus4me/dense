@@ -24,11 +24,19 @@ describe("auth", function () {
     return { auth, owner, balance, Provider };
   }
 
+  // async function Register(_name : string, _profile : string) {
+  //   const { auth } = await loadFixture(deployAuthFixure);
+  //   await auth.register(_name, _profile);
+   
+  // }
+  
+
   describe("register new User", () => {
     
     
     it("should register new user", async () => {
       const { auth, owner, balance } = await loadFixture(deployAuthFixure);
+
 
       const name: string = "Safoan";
       const profilePic: string =
@@ -42,7 +50,7 @@ describe("auth", function () {
     });
 
     it("showld send the user based on address provided", async () => {
-      const { auth, owner, balance } = await loadFixture(deployAuthFixure);
+      const { auth, owner } = await loadFixture(deployAuthFixure);
 
       // reprendre la logique d'enregistrement avant :
       const Name: string = "Safoan";
@@ -58,7 +66,7 @@ describe("auth", function () {
     });
 
     it("showld returnd true if user is registered", async() => {
-      const { auth, owner, balance } = await loadFixture(deployAuthFixure);
+      const { auth } = await loadFixture(deployAuthFixure);
       const Name: string = "Safoan";
       const ProfilePic: string = "https://images.unsplash.com/photo-1492633423870-43d1cd2775eb?&w=128&h=128&dpr=2&q=80";
       await auth.register(Name, ProfilePic);
@@ -73,12 +81,11 @@ describe("auth", function () {
   describe("update user details", () => {
 
     it("should updateUserInfos", async() => {
-        const {auth, owner, balance} = await loadFixture(deployAuthFixure);
+        const {auth, owner} = await loadFixture(deployAuthFixure);
         // verifier si on peut correctement modifier les informations utilisateurs une fois l'user enregistré
         // on registre a l'user avant pour garder l'etat
         const Name: string = "Safoan";
         const ProfilePic: string = "https://images.unsplash.com/photo-1492633423870-43d1cd2775eb?&w=128&h=128&dpr=2&q=80";
-  
         await auth.register(Name, ProfilePic);
 
         // ---------------------------------------------
@@ -98,7 +105,7 @@ describe("auth", function () {
 
   describe("delete user", () => {
       it("showld delete the selected user", async() => {
-      const {auth, owner, balance} = await loadFixture(deployAuthFixure);
+      const {auth, owner} = await loadFixture(deployAuthFixure);
 
       const Name: string = "Safoan";
       const ProfilePic: string = "https://images.unsplash.com/photo-1492633423870-43d1cd2775eb?&w=128&h=128&dpr=2&q=80";
@@ -108,9 +115,27 @@ describe("auth", function () {
       await auth.deleteUser(owner.address); 
       
       const deleted = await auth.users(owner.address);
-      console.log(deleted)
       expect(test).to.not.equal(deleted); // passed
       
     })  
+  })
+
+  describe("change user role", () => {
+    it("showld change role to admin for an selected user", async() => {
+      const {auth, owner, balance} = await loadFixture(deployAuthFixure);
+      
+      const Name: string = "Safoan";
+      const ProfilePic: string = "https://images.unsplash.com/photo-1492633423870-43d1cd2775eb?&w=128&h=128&dpr=2&q=80";
+      await auth.register(Name, ProfilePic);
+
+      const [,,,role] = await auth.users(owner.address)
+      
+      // proceder au changement des roles
+      await auth.changeRoles(owner.address);
+      const [,,,newRole] = await auth.users(owner.address)
+      
+       expect(role).to.not.equal(newRole); // passed
+
+    } )
   })
 });
