@@ -14,7 +14,7 @@ contract Authentification is Ownable {
     event Registered(uint256 _code, string message);
     event UpdateDetails(uint256 _code , string message, string _newName, string _newProfilePick);
     event UserDeleted(uint256 _code, string message, address _user);
-    mapping(address => Auth) users;
+    mapping(address => Auth) public users;
 
     function register(string memory _name, string memory _profilePic) external {
         // il faut que l'user soit pas deja enregistré

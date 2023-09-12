@@ -18,6 +18,8 @@ contract Vault {
     Safe[] public safe;
     mapping(address => Safe[]) vaultsCreated;
     mapping(address => Safe[]) trackDonations;
+    mapping(address => uint256) UserBalance;
+
     // ---------------------- / events / --------------------------
     event SafeCreated(); // when safe is created
     event SafeAmountReached();  // when safe reached his amountToreach
@@ -29,13 +31,25 @@ contract Vault {
     receive()  external payable {
  
     }
-
+    
+    
+    // -----------------------------------------------------
+    //          SAFE CREATION AND MANTENACE LOGIC
+    // -----------------------------------------------------
     function createNewSafe() external {}
     function updateSafe()    external {}
     function closeSafe()     external {}
     function contribute()    external {}
-    function getContributors() external view returns(address) {}
+
     
+    //-----------------------------------------------------
+    //          CONTRIBUTIONS RETURNS LOGIC
+    // ----------------------------------------------------
+
+    function getContributors() external view returns(address) {}
+    function getTotalContributionAmount() external view returns(uint256){}
+    function getContributionAmountBySafe() external view returns(uint256){}
+
 
 
 }
