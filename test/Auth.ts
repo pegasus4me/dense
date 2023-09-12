@@ -23,6 +23,8 @@ describe("auth", function () {
   }
 
   describe("register new User", () => {
+    
+    
     it("should register new user", async () => {
       const { auth, owner, balance } = await loadFixture(deployAuthFixure);
 
@@ -52,5 +54,43 @@ describe("auth", function () {
       expect(wallet).to.equal(owner.address);
       expect(pic).to.equal(ProfilePic);
     });
+
+    it("showld returnd true if user is registered", async() => {
+      const { auth, owner, balance } = await loadFixture(deployAuthFixure);
+      const Name: string = "Safoan";
+      const ProfilePic: string = "https://images.unsplash.com/photo-1492633423870-43d1cd2775eb?&w=128&h=128&dpr=2&q=80";
+      await auth.register(Name, ProfilePic);
+      
+      const checkIfIsHere = await auth.getifUserIsRegistered()
+      expect(checkIfIsHere).to.equal(true)
+    
+    })
+
   });
+
+  describe("update user details", () => {
+
+    it("should updateUserInfos", async() => {
+        const {auth, owner, balance} = await loadFixture(deployAuthFixure);
+        // verifier si on peut correctement modifier les informations utilisateurs une fois l'user enregistré
+        // on registre a l'user avant pour garder l'etat
+        const Name: string = "Safoan";
+        const ProfilePic: string = "https://images.unsplash.com/photo-1492633423870-43d1cd2775eb?&w=128&h=128&dpr=2&q=80";
+  
+        await auth.register(Name, ProfilePic);
+
+        // ---------------------------------------------
+        const newName : string = "Rayan"; 
+        const newProfile : string = "https://i.guim.co.uk/img/media/ef8492feb3715ed4de705727d9f513c168a8b196/37_0_1125_675/master/1125.jpg?width=465&dpr=1&s=none"
+
+        await auth.updateUserDetails(newName, newProfile);
+        // check si le mapping a eté correctement mis a jour
+        const [name, wallet, profilePic] = await auth.users(owner.address);
+        
+        expect(name).to.equal(newName);
+        expect(profilePic).to.equal(newProfile)
+      
+    })
+
+  })
 });
