@@ -7,4 +7,5 @@
 // testing  Authentification in progress : 
     - register function passed 
     - getUser function passed
-    - updateUserDetails passed
+    - updateUserDetails function passed
+    - deletedUser function passed

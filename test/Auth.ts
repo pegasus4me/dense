@@ -19,6 +19,8 @@ describe("auth", function () {
     const url = "http://127.0.0.1:8545/";
     const Provider = new ethers.JsonRpcProvider(url);
     const balance = await Provider.getBalance(owner.address);
+
+  
     return { auth, owner, balance, Provider };
   }
 
@@ -34,9 +36,9 @@ describe("auth", function () {
 
       await auth.register(name, profilePic);
 
-      const userData = await auth.users(owner.address);
-      expect(userData.name).to.equal(name);
-      expect(userData.profilePic).to.equal(profilePic);
+      const userData = await auth.users(owner.address);// passed
+      expect(userData.name).to.equal(name);// passed
+      expect(userData.profilePic).to.equal(profilePic);// passed
     });
 
     it("showld send the user based on address provided", async () => {
@@ -50,9 +52,9 @@ describe("auth", function () {
       await auth.register(Name, ProfilePic);
       const [name, wallet, pic] = await auth.getUser(owner.address);
 
-      expect(name).to.equal(Name);
-      expect(wallet).to.equal(owner.address);
-      expect(pic).to.equal(ProfilePic);
+      expect(name).to.equal(Name); // passed
+      expect(wallet).to.equal(owner.address); // passed
+      expect(pic).to.equal(ProfilePic); // passed
     });
 
     it("showld returnd true if user is registered", async() => {
@@ -62,7 +64,7 @@ describe("auth", function () {
       await auth.register(Name, ProfilePic);
       
       const checkIfIsHere = await auth.getifUserIsRegistered()
-      expect(checkIfIsHere).to.equal(true)
+      expect(checkIfIsHere).to.equal(true) // passed
     
     })
 
@@ -87,10 +89,28 @@ describe("auth", function () {
         // check si le mapping a eté correctement mis a jour
         const [name, wallet, profilePic] = await auth.users(owner.address);
         
-        expect(name).to.equal(newName);
-        expect(profilePic).to.equal(newProfile)
+        expect(name).to.equal(newName); //passed
+        expect(profilePic).to.equal(newProfile) //passed
       
     })
 
+  })
+
+  describe("delete user", () => {
+      it("showld delete the selected user", async() => {
+      const {auth, owner, balance} = await loadFixture(deployAuthFixure);
+
+      const Name: string = "Safoan";
+      const ProfilePic: string = "https://images.unsplash.com/photo-1492633423870-43d1cd2775eb?&w=128&h=128&dpr=2&q=80";
+      await auth.register(Name, ProfilePic);
+      
+      const test = await auth.users(owner.address);
+      await auth.deleteUser(owner.address); 
+      
+      const deleted = await auth.users(owner.address);
+      console.log(deleted)
+      expect(test).to.not.equal(deleted); // passed
+      
+    })  
   })
 });
