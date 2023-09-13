@@ -45,6 +45,9 @@ contract CrowdFunding is Ownable {
         authContract.changeRoles(_address);
     }
 
+    // ---------------------------------------------------------------
+    //              VAULT FROM VAULT.SOL  
+    // _______________________________________________________________
 
 
 

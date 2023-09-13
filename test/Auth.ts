@@ -3,7 +3,7 @@ import {
   loadFixture,
 } from "@nomicfoundation/hardhat-toolbox/network-helpers";
 import { anyValue } from "@nomicfoundation/hardhat-chai-matchers/withArgs";
-import { expect } from "chai";
+import { expect, assert } from "chai";
 import { ethers } from "hardhat";
 
 describe("auth", function () {
@@ -23,13 +23,6 @@ describe("auth", function () {
   
     return { auth, owner, balance, Provider };
   }
-
-  // async function Register(_name : string, _profile : string) {
-  //   const { auth } = await loadFixture(deployAuthFixure);
-  //   await auth.register(_name, _profile);
-   
-  // }
-  
 
   describe("register new User", () => {
     
