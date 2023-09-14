@@ -17,5 +17,7 @@
 // vault contracts
 
 contribute function to do  DONE
-and some get return functions to do IN PROGRESS 
+and some get return functions to do DONE
+
+<!-- VAULT.SOL TESTING -->  TO DO
     

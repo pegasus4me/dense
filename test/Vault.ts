@@ -8,5 +8,22 @@ import {
 
   describe("vaut", function () {
 
+    async function loadVaultFixure(){
+
+    }
+    
+    async function createSafe(){
+
+    }
+
+
+
+    describe("create a new Safe", () => {
+        
+      it("should create a new Safe", () => {
+
+      })
+    })
+
   });
   
