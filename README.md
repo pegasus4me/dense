@@ -16,6 +16,6 @@
 
 // vault contracts
 
-contribute function to do 
-and some get return functions to do 
+contribute function to do  DONE
+and some get return functions to do IN PROGRESS 
     

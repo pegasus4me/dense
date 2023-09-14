@@ -16,12 +16,19 @@ contract Vault {
         uint256 currentBalance;
     }
 
+    struct Donator {
+        uint256 id; 
+        address emitter; 
+        uint256 value; 
+    }
+
     Safe[] public safe;
+    Donator[] public donator; 
 
     mapping(address => Safe[]) vaultsCreated;
     mapping(address => Safe[]) vaultClosed; 
-    mapping(address => Safe[]) trackDonations;
-    mapping(address => uint256) userBalance;
+    mapping(address => Donator[]) trackDonations;  // track donators in a array
+    mapping(address => uint256) userBalance;  // update the contributors balance after donations
     mapping(address => uint256) safeBalance;  // update de safeBalance
 
     // ---------------------- / events / --------------------------
@@ -179,8 +186,20 @@ contract Vault {
         }
 
         // update mappings
+        safeBalance[address(this)] += _amount;
+        userBalance[msg.sender] -= _amount;
         
-       
+        //////////////////////
+
+        uint256 id = block.timestamp;
+        
+        Donator memory newDonators = Donator({
+            id : id, 
+            emitter : msg.sender, 
+            value: _amount
+        });
+
+        trackDonations[address(this)].push(newDonators);
 
     }
     
