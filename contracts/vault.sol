@@ -3,6 +3,8 @@ import "hardhat/console.sol";
 pragma solidity ^0.8.9;
 
 contract Vault {
+
+    
     struct Safe {
         uint256 id;
         string safeName;
@@ -20,13 +22,13 @@ contract Vault {
     mapping(address => Safe[]) vaultClosed; 
     mapping(address => Safe[]) trackDonations;
     mapping(address => uint256) userBalance;
-    mapping(uint256 => uint256) safeBalance;
+    mapping(address => uint256) safeBalance;  // update de safeBalance
 
     // ---------------------- / events / --------------------------
     event SafeCreated(uint64 code, string message, uint256 safeId); // when safe is created
     event SafeUpdated(uint64 code, string messsage, string _name, string _description , uint256 amount);
-    event SafeAmountReached(); // when safe reached his amountToreach
-    event SafeClosed(); // when safe creator close this safe
+    event SafeClosed(uint64 code, string message, uint256 safeIndex); // when safe creator close this safe
+    event SafeAmountReached(uint64 code , string message, uint256 _amount); // when safe reached his amountToreach
     event SuccesContribured(); // when user send money that safe
     
     receive() external payable {}
@@ -111,6 +113,7 @@ contract Vault {
             index++
         ) {
             if (vaultsCreated[msg.sender][index].id == _id) {
+
                 vaultsCreated[msg.sender][index].safeName = _safeName;
                 vaultsCreated[msg.sender][index].description = _description;
                 vaultsCreated[msg.sender][index].amountToReach = _newAmount;
@@ -131,8 +134,12 @@ contract Vault {
         delete(vaultsCreated[msg.sender][indexToDelete]);
         // add this safe to the vaultClosedMapping
         vaultClosed[msg.sender].push(vaultsCreated[msg.sender][indexToDelete]);
+        emit SafeClosed(200, "safe closed", indexToDelete);
+        
 
     }
+
+
     // function utilisé pour 
     function findSafeIndex(uint256 _id) internal view returns(uint256) {
         for (uint256 index = 0; index < vaultsCreated[msg.sender].length; index++) {
@@ -142,17 +149,53 @@ contract Vault {
         }
         revert("Safe not found!");
     }
+    
 
-    function contribute() external payable {
+    
+    // function contribute has to be avalaible for each safe and has to know what safe are dealing with to succesfully transfer money in a correst safe
+    function contribute(uint256 _id, uint256 _amount) external payable {
 
         // verify if the user has enougth money in their wallet
+        require(address(msg.sender).balance  > 100000000000000 , "not enought eth in your balance");
+        require(address(msg.sender).balance > _amount, "you can't send more than you have!");
+        // recuper l'addresse du contract
+        Safe memory findSafeId = findSafeById(msg.sender, _id);
+        require(findSafeId.id == _id, "safe not found");
         // send money to an Safe 
-        // update the safe balance
+        if(findSafeId.currentBalance < findSafeId.amountToReach) {
+            payable(address(msg.sender)).transfer(_amount);
+            // update the safe balance
+            findSafeId.currentBalance += _amount;
+        } else {
+            revert("you can't fund this safe, cause : amout already reached");
+        }
+
         // update the reacher value in struct when safe balance == amountToReach 
+        if(findSafeId.currentBalance >= findSafeId.amountToReach) {
+            
+            findSafeId.reached = true;
+            // emit events
+            emit SafeAmountReached(200, "amount reached", findSafeId.currentBalance);
+        }
+
+        // update mappings
+        
+       
+
+    }
+    
+    function findSafeById(address _user, uint256 _id) internal view returns(Safe memory) {
+        Safe[] storage userSafe =  vaultsCreated[_user];
+        for (uint256 index = 0; index < userSafe.length; index++) {
+            if(userSafe[index].id == _id) {
+                return userSafe[index];
+            }
+        }
+        revert("safe not found");
     }
 
     //-----------------------------------------------------
-    //          CONTRIBUTIONS RETURNS LOGIC
+    //          CONTRIBUTIONS RETURNS LOGIC 
     // ----------------------------------------------------
 
     function getContributors() external view returns (address) {}

@@ -12,4 +12,10 @@
     - deletedUser function passed
     - changeRoles function passed
 
-    <!-- merci pour  votre suivi  -->
+
+
+// vault contracts
+
+contribute function to do 
+and some get return functions to do 
+    
