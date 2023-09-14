@@ -36,7 +36,7 @@ contract Vault {
     event SafeUpdated(uint64 code, string messsage, string _name, string _description , uint256 amount);
     event SafeClosed(uint64 code, string message, uint256 safeIndex); // when safe creator close this safe
     event SafeAmountReached(uint64 code , string message, uint256 _amount); // when safe reached his amountToreach
-    event SuccesContribured(); // when user send money that safe
+    event SuccesContribured(uint56 code, string message, address contibutor); // when user send money that safe
     
     receive() external payable {}
     
@@ -99,6 +99,7 @@ contract Vault {
     @param _safeName new name
     @param _description nes description
     @param _newAmount new amount to reach
+
 
     */
     function updateSafe(
@@ -163,14 +164,19 @@ contract Vault {
     function contribute(uint256 _id, uint256 _amount) external payable {
 
         // verify if the user has enougth money in their wallet
-        require(address(msg.sender).balance  > 100000000000000 , "not enought eth in your balance");
         require(address(msg.sender).balance > _amount, "you can't send more than you have!");
         // recuper l'addresse du contract
         Safe memory findSafeId = findSafeById(msg.sender, _id);
         require(findSafeId.id == _id, "safe not found");
+        
+        
         // send money to an Safe 
         if(findSafeId.currentBalance < findSafeId.amountToReach) {
-            payable(address(msg.sender)).transfer(_amount);
+            
+            (bool sent, bytes memory data) = payable(address(findSafeId.emitter)).call{value : msg.value}("");
+            require(sent, "failed to send eth");
+            // trigger event succesfullyContributed
+            emit SuccesContribured(200, "succesfully Contributed", msg.sender);
             // update the safe balance
             findSafeId.currentBalance += _amount;
         } else {
@@ -200,6 +206,7 @@ contract Vault {
         });
 
         trackDonations[address(this)].push(newDonators);
+        donator.push(newDonators);
 
     }
     
@@ -217,9 +224,11 @@ contract Vault {
     //          CONTRIBUTIONS RETURNS LOGIC 
     // ----------------------------------------------------
 
-    function getContributors() external view returns (address) {}
+    function getAllContributors() external view returns (Donator[] memory) {
+        return donator;
+    }
+    
+    // function getTotalContributionAmount() external view returns (uint256) {}
 
-    function getTotalContributionAmount() external view returns (uint256) {}
-
-    function getContributionAmountBySafe() external view returns (uint256) {}
+    // function getContributionAmountBySafe() external view returns (uint256) {}
 }
