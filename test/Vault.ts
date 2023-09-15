@@ -16,7 +16,7 @@ import {
   
   // }
 
-  describe("aut", function () {
+  describe("aut", async function () {
 
     async function loadVaultFixure(){
       const [owner] = await ethers.getSigners();
@@ -33,31 +33,40 @@ import {
       return { auth, owner, balance, Provider };
     }
     
-    // async function createSafe(safeName : string, description :  string, amount : number, category : string): Promise<void> {
-    //   const {auth} = await loadFixture(loadVaultFixure);
-    //   await auth.createNewSafe(safeName, description, amount, category);
-    // }
-
-
+    async function createSafe() {
+      const {auth} = await loadFixture(loadVaultFixure);
+        await auth.createNewSafe( "demo", "the best safe", 10000000000000, "cars");
+        await auth.createNewSafe("bobo", "rest", 1000000000, 'charity');
+        await auth.createNewSafe("bodemoo", "dddddd", 8000000000, 'charity');
+      const after = await auth.vaultcreatedbyuser();
+      
+      return after
+    }
 
     describe("create a new Safe", () => {
         
       it("should create a new Safe", async() => {
         const {auth} = await loadFixture(loadVaultFixure);
         const before = await auth.vaultcreatedbyuser();
-          await auth.createNewSafe( "demo", "the best safe", 10000000000000, "cars");
-          await auth.createNewSafe("bobo", "rest", 1000000000, 'charity');
-          await auth.createNewSafe("bodemoo", "dddddd", 8000000000, 'charity');
-        const after = await auth.vaultcreatedbyuser();
-        expect(before.length).to.not.equal(after.length);
+        const res = await createSafe()        
+        expect(before.length).to.not.equal(res.length);
        
       })
 
 
-      it("should update specific Safe ",async() => {
-        const {auth} = await loadFixture(loadVaultFixure);
+       it("should update specific Safe ",async() => {
+          const {auth} = await loadFixture(loadVaultFixure);
+          const res = await createSafe();
+          const name = res[2].safeName
+          const id = res[2].id
 
-      })
+          await auth.updateSafe(id,"nouveau Safe", "decription mise a jour", 5040300000, "dessins");
+          const check = await auth.vaultcreatedbyuser(); // after safe update
+          const updatedName = check[2].safeName
+
+          expect(name).to.not.equal(updatedName)
+
+       })
     })
 
   });

@@ -19,5 +19,9 @@
 contribute function to do  DONE
 and some get return functions to do DONE
 
-<!-- VAULT.SOL TESTING -->  TO DO
-    
+<!-- VAULT.SOL TESTING -->  IN PROGRESS
+
+// testing Vault in progress
+
+    - create new Safe passed
+    - update Specific safe passed
