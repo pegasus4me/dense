@@ -25,18 +25,18 @@ contract Vault {
     Safe[] public safe;
     Donator[] public donator; 
 
-    mapping(address => Safe[]) vaultsCreated;
-    mapping(address => Safe[]) vaultClosed; 
-    mapping(address => Donator[]) trackDonations;  // track donators in a array
-    mapping(address => uint256) userBalance;  // update the contributors balance after donations
-    mapping(address => uint256) safeBalance;  // update de safeBalance
+    mapping(address => Safe[]) public vaultsCreated;
+    mapping(address => Safe[]) public vaultClosed; 
+    mapping(address => Donator[]) public trackDonations;  // track donators in a array
+    mapping(address => uint256) public userBalance;  // update the contributors balance after donations
+    mapping(address => uint256) public safeBalance;  // update de safeBalance
 
     // ---------------------- / events / --------------------------
     event SafeCreated(uint64 code, string message, uint256 safeId); // when safe is created
     event SafeUpdated(uint64 code, string messsage, string _name, string _description , uint256 amount);
     event SafeClosed(uint64 code, string message, uint256 safeIndex); // when safe creator close this safe
     event SafeAmountReached(uint64 code , string message, uint256 _amount); // when safe reached his amountToreach
-    event SuccesContribured(uint56 code, string message, address contibutor); // when user send money that safe
+    event SuccesContribured(uint56 code, string message, address contibutor, bytes32 data); // when user send money that safe
     
     receive() external payable {}
     
@@ -93,6 +93,7 @@ contract Vault {
 
         emit SafeCreated(200, "safe created", id);
     }
+
 
     /**
     @param _id = id of the current safe
@@ -176,7 +177,7 @@ contract Vault {
             (bool sent, bytes memory data) = payable(address(findSafeId.emitter)).call{value : msg.value}("");
             require(sent, "failed to send eth");
             // trigger event succesfullyContributed
-            emit SuccesContribured(200, "succesfully Contributed", msg.sender);
+            emit SuccesContribured(200, "succesfully Contributed", msg.sender, bytes32(data));
             // update the safe balance
             findSafeId.currentBalance += _amount;
         } else {
@@ -223,9 +224,17 @@ contract Vault {
     //-----------------------------------------------------
     //          CONTRIBUTIONS RETURNS LOGIC 
     // ----------------------------------------------------
+    function vaultcreatedbyuser() external view returns(Safe[] memory) {
+        return vaultsCreated[msg.sender]; 
+    }
+
 
     function getAllContributors() external view returns (Donator[] memory) {
         return donator;
+    }
+
+    function getAllSafes() external view returns(Safe[] memory) {
+        return safe;
     }
     
     // function getTotalContributionAmount() external view returns (uint256) {}

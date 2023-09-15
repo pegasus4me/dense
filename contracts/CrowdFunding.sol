@@ -16,6 +16,7 @@ contract CrowdFunding is Ownable {
 
     constructor(address _authAddress) {
         authContract = Authentification(_authAddress);
+       
     }
     // --------------------------------------------------------
     //             REGISTRATION LOGIC FROM AUTH.SOL

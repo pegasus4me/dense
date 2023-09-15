@@ -36,7 +36,6 @@ describe("auth", function () {
         "https://images.unsplash.com/photo-1492633423870-43d1cd2775eb?&w=128&h=128&dpr=2&q=80";
 
       await auth.register(name, profilePic);
-
       const userData = await auth.users(owner.address);// passed
       expect(userData.name).to.equal(name);// passed
       expect(userData.profilePic).to.equal(profilePic);// passed
