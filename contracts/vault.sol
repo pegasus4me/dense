@@ -25,6 +25,7 @@ contract Vault {
     Safe[] public safe;
     Donator[] public donator; 
 
+
     mapping(address => Safe[]) public vaultsCreated;
     mapping(address => Safe[]) public vaultClosed; 
     mapping(address => Donator[]) public trackDonations;  // track donators in a array
@@ -158,14 +159,19 @@ contract Vault {
         }
         revert("Safe not found!");
     }
-    
+        
+        
+    function deposit() external payable {
+        userBalance[msg.sender] = address(this).balance;
+    }
 
     
     // function contribute has to be avalaible for each safe and has to know what safe are dealing with to succesfully transfer money in a correst safe
     function contribute(uint256 _id, uint256 _amount) external payable {
 
         // verify if the user has enougth money in their wallet
-        require(address(msg.sender).balance > _amount, "you can't send more than you have!");
+        require(address(msg.sender).balance >= _amount, "you can't send more than you have!");
+        require(userBalance[msg.sender] >= _amount, "Insufficient user balance");
         // recuper l'addresse du contract
         Safe memory findSafeId = findSafeById(msg.sender, _id);
         require(findSafeId.id == _id, "safe not found");
@@ -174,10 +180,12 @@ contract Vault {
         // send money to an Safe 
         if(findSafeId.currentBalance < findSafeId.amountToReach) {
             
-            (bool sent, bytes memory data) = payable(address(findSafeId.emitter)).call{value : msg.value}("");
-            require(sent, "failed to send eth");
+           
+                (bool sent, bytes memory data) = payable(address(findSafeId.emitter)).call{value : msg.value}("");
+                require(sent, "failed to send eth");    
+                emit SuccesContribured(200, "succesfully Contributed", msg.sender, bytes32(data));
+        
             // trigger event succesfullyContributed
-            emit SuccesContribured(200, "succesfully Contributed", msg.sender, bytes32(data));
             // update the safe balance
             findSafeId.currentBalance += _amount;
         } else {
@@ -191,7 +199,8 @@ contract Vault {
             // emit events
             emit SafeAmountReached(200, "amount reached", findSafeId.currentBalance);
         }
-
+        // Vérifier que l'opération de mise à jour ne provoque pas de débordement
+        require(safeBalance[address(this)] + _amount >= safeBalance[address(this)], "Safe balance overflow");
         // update mappings
         safeBalance[address(this)] += _amount;
         userBalance[msg.sender] -= _amount;

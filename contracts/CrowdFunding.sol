@@ -14,9 +14,9 @@ contract CrowdFunding is Ownable {
     Vault public vault; 
 
 
-    constructor(address _authAddress) {
+    constructor(address _authAddress, address payable _vaultAddress) {
         authContract = Authentification(_authAddress);
-       
+        vault = Vault(_vaultAddress);
     }
     // --------------------------------------------------------
     //             REGISTRATION LOGIC FROM AUTH.SOL
@@ -50,6 +50,34 @@ contract CrowdFunding is Ownable {
     //              VAULT FROM VAULT.SOL  
     // _______________________________________________________________
 
+    // create Safe
+    function createSafe(
+        string memory _safeName,
+        string memory _description,
+        uint256 _amount,
+        string memory _category
+
+    ) external {
+         vault.createNewSafe(_safeName, _description, _amount, _category);
+    }
+
+    // update Specific Safe
+    function updateSafe(
+        uint256 _id,
+        string memory _safeName,
+        string memory _description,
+        uint _newAmount,
+        string memory _category
+    ) external {
+        vault.updateSafe(_id, _safeName, _description, _newAmount, _category);
+    }
+    
+    // delete Specific Safe created
+    function deleteSafe(
+        uint256 _id
+    ) external {
+        vault.closeSafe(_id);
+    }
 
 
 }
