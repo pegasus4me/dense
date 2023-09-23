@@ -1,11 +1,11 @@
 {
   "name": "hardhat-project",
-  "main" : "./dist-js/server.js",
+  "main": "./dist-js/server.js",
   "scripts": {
     "test": "npx hardhat test",
     "console": "npx hardhat console",
     "node": "npx hardhat node",
-    "watch" : "nodemon ./dist-js/server.js",
+    "watch": "nodemon ./dist-js/server.js",
     "complile": "npx hardhat compile",
     "run": "npx hardhat run deploy/deploy.ts --network arbitrumGoerli",
     "verify": "npx hardhat verify --network arbitrumGoerli 0xF81Ce655C20b2c4c504A359934AB79880Ec67eeE "
