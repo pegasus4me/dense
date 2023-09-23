@@ -7,8 +7,8 @@
     "node": "npx hardhat node",
     "watch" : "nodemon ./dist-js/server.js",
     "complile": "npx hardhat compile",
-    "run": "npx hardhat run deploy/deploy.ts --network base-goerli",
-    "verify": "npx hardhat verify --network base-goerli 0xF81Ce655C20b2c4c504A359934AB79880Ec67eeE "
+    "run": "npx hardhat run deploy/deploy.ts --network arbitrumGoerli",
+    "verify": "npx hardhat verify --network arbitrumGoerli 0xF81Ce655C20b2c4c504A359934AB79880Ec67eeE "
   },
   "devDependencies": {
     "@nomicfoundation/hardhat-chai-matchers": "^2.0.0",
