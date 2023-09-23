@@ -39,7 +39,6 @@ contract Vault {
     event SafeAmountReached(uint64 code , string message, uint256 _amount); // when safe reached his amountToreach
     event SuccesContribured(uint56 code, string message, address contibutor, bytes32 data); // when user send money that safe
     
-    receive() external payable {}
     
     // ------------------------/ MODFIERS /--------------------------------
     modifier onlyVault {
@@ -162,9 +161,13 @@ contract Vault {
         
         
     function deposit() external payable {
-        userBalance[msg.sender] = address(this).balance;
+        userBalance[msg.sender] = address(msg.sender).balance; 
+        
     }
 
+    function balanceOf() external view returns(uint256) {
+        return userBalance[msg.sender];
+    }
     
     // function contribute has to be avalaible for each safe and has to know what safe are dealing with to succesfully transfer money in a correst safe
     function contribute(uint256 _id, uint256 _amount) external payable {
@@ -199,6 +202,8 @@ contract Vault {
             // emit events
             emit SafeAmountReached(200, "amount reached", findSafeId.currentBalance);
         }
+
+
         // Vérifier que l'opération de mise à jour ne provoque pas de débordement
         require(safeBalance[address(this)] + _amount >= safeBalance[address(this)], "Safe balance overflow");
         // update mappings

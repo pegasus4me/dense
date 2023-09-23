@@ -6,8 +6,10 @@
     "forceConsistentCasingInFileNames": true,
     "strict": true,
     "skipLibCheck": true,
-    "resolveJsonModule": true
+    "resolveJsonModule": true,
+    "rootDir": "./scripts",
+    "outDir": "./dist-js"
   },
-  "include": ["./src", "./scripts"],//only the "scripts" part.
+  "include": ["./src", "./scripts", "deploy/deploy.ts"],//only the "scripts" part.
   "files": ["./hardhat.config.ts"]
 }

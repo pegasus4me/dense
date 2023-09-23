@@ -29,7 +29,7 @@ import {
       const Provider = new ethers.JsonRpcProvider(url);
       const balance = await Provider.getBalance(owner.address);
     
-      return { auth, owner, balance, Provider, };
+      return { auth, owner, balance, Provider};
     }
     
     async function createSafe() {
@@ -89,26 +89,65 @@ import {
         //                   contribution TEST
         // ______________________________________________________
 
-        it("contribute on a Specific Safe" , async() => {
-          const {auth, owner, balance} = await loadFixture(loadVaultFixure);
-          const res = await createSafe();
-          await auth.deposit();
+        // factoryAddress : 0xCf7Ed3AccA5a467e9e704C703E8D87F634fB0Fc9
+        // // msg.sender  :   0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266
+        
+        it("should update userBalance Mapping after deposit", async() => {
+          const {auth, owner, Provider} = await loadFixture(loadVaultFixure);
+          await createSafe();
+          
+          
+            const account = await Provider.listAccounts();
+            const signer = await Provider.getSigner(account[1].address)
+            // const CONTRACT_ADDRESS = await auth.getAddress()
+            const user = "0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266"
+            
+            // inital User Balance in account
+            const InitialBalance = await Provider.getBalance("0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266")
+            const parseToEthz  = ethers.formatEther(InitialBalance)
+            console.log('inital', parseToEthz)
+            
+            // emit transfer to his account
+            await signer.sendTransaction({
+              to : user, 
+              value : ethers.parseUnits('1', 'ether') 
+            });
 
-          const value = ethers.parseEther("0.5");
-          const id = res[0].id;
+            // update userBalance Mapping
+            await auth.deposit(); // depot
+            const finalBalance = await auth.balanceOf();
+            
+            console.log('--------------------------------')
+            
+            const parseToEth  = ethers.formatEther(finalBalance)
+
+            await new Promise((resolve) => setTimeout(resolve, 10000)); // Attendre 1 seconde
+            console.log('final', parseToEth)
+
+
+            // expect(balanceDifference).to.equal(Number(ethers.parseUnits("1", "ether")))
+            // console.log("final Bal", balanceDifference);
+
+          })
+        
+        // it("contribute on a Specific Safe" , async() => {
+        //   const {auth, owner} = await loadFixture(loadVaultFixure);
+        //   const newSafe = await createSafe();
+        //   await auth.deposit(); // depot
+        //   const update = await auth.userBalance(owner.address);
+        //   console.log(update)
           
+
+        //   //  
+        //   //  const id = newSafe[0].id;
+        //   // const before = await auth.vaultcreatedbyuser();
           
-          const update = await auth.userBalance(owner.address);
-          console.log("dodod", update)
-          console.log(balance)
-          // const before = await auth.vaultcreatedbyuser();
+        //   // console.log("before balance ===", before[0].currentBalance)
+        //   // await auth.contribute(id, value);
+        //   // console.log("after balance ===", before[0].currentBalance)
           
-          // console.log("before balance ===", before[0].currentBalance)
-          // await auth.contribute(id, value);
-          // console.log("after balance ===", before[0].currentBalance)
-          
-         
-        })
+     
+        // })
     })
 
   });

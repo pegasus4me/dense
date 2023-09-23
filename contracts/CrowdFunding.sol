@@ -78,6 +78,24 @@ contract CrowdFunding is Ownable {
     ) external {
         vault.closeSafe(_id);
     }
-
-
+    // deposit
+    function deposit() external {
+        vault.deposit();
+    }
+    // contribute
+    function contribute(
+        uint256 _id,
+        uint256 _amount
+    ) external {
+        vault.contribute(_id, _amount);
+    }
+    // return the balance 
+    function balanceOf() external view returns(uint256){
+        return vault.balanceOf();
+    }
+    // get the vaults creates by the users
+    function vaultCreatedByUser() external view returns(Vault.Safe[] memory){
+        return vault.vaultcreatedbyuser();
+    }
+   
 }
